@@ -1,0 +1,330 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Matching Game</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h1 {
+    margin: 20px;
+}
+
+.game-container {
+    display: grid;
+    grid-template-columns: repeat(4, 100px);
+    grid-gap: 10px;
+}
+
+.card {
+    width: 100px;
+    height: 100px;
+    background-color: #4CAF50;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.card.flipped {
+    background-color: #fff;
+    color: #4CAF50;
+    transform: rotateY(180deg);
+}
+img{
+    width: 100px;
+    height: 100px;
+}
+button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+    </style>
+</head>
+<body>
+    <h1>Memory Matching Game</h1>
+    <div class="game-container" id="game-container"></div>
+    <button id="restart-button">Restart Game</button>
+    <script>
+        const cardArray = [
+    { name: 'A', img: 'img/A.png' },
+    { name: 'B', img: 'img/B.png' },
+    { name: 'C', img: 'img/C.png' },
+    { name: 'D', img: 'img/D.png' },
+    { name: 'E', img: 'img/E.png' },
+    { name: 'F', img: 'img/F.png' },
+    { name: 'G', img: 'img/G.png' },
+    { name: 'H', img: 'img/H.png' },
+];
+
+let gameGrid = cardArray.concat(cardArray).sort(() => 0.5 - Math.random());
+let firstCard, secondCard;
+let hasFlippedCard = false;
+let lockBoard = false;
+
+const gameContainer = document.getElementById('game-container');
+
+function createBoard() {
+    gameGrid.forEach(card => {
+        const cardElement = document.createElement('div');
+        cardElement.classList.add('card');
+        cardElement.dataset.name = card.name;
+
+        const front = document.createElement('img');
+        // front.setAttribute('src', 'img/blank.png');
+        const back = document.createElement('img');
+        back.setAttribute('src', card.img);
+
+        cardElement.appendChild(front);
+        cardElement.appendChild(back);
+        cardElement.addEventListener('click', flipCard);
+        gameContainer.appendChild(cardElement);
+    });
+}
+
+function flipCard() {
+    if (lockBoard) return;
+    if (this === firstCard) return;
+
+    this.classList.add('flipped');
+
+    if (!hasFlippedCard) {
+        hasFlippedCard = true;
+        firstCard = this;
+        return;
+    }
+
+    secondCard = this;
+    checkForMatch();
+}
+
+function checkForMatch() {
+    const isMatch = firstCard.dataset.name === secondCard.dataset.name;
+
+    isMatch ? disableCards() : unflipCards();
+}
+
+function disableCards() {
+    firstCard.removeEventListener('click', flipCard);
+    secondCard.removeEventListener('click', flipCard);
+    resetBoard();
+}
+
+function unflipCards() {
+    lockBoard = true;
+    setTimeout(() => {
+        firstCard.classList.remove('flipped');
+        secondCard.classList.remove('flipped');
+        resetBoard();
+    }, 1500);
+}
+
+function resetBoard() {
+    [hasFlippedCard, lockBoard] = [false, false];
+    [firstCard, secondCard] = [null, null];
+}
+
+document.getElementById('restart-button').addEventListener('click', () => {
+    gameContainer.innerHTML = '';
+    createBoard();
+});
+
+createBoard();
+
+    </script>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Matching Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            margin: 20px;
+        }
+
+        .game-container {
+            display: grid;
+            grid-template-columns: repeat(4, 100px);
+            grid-gap: 10px;
+        }
+
+        .card {
+            width: 100px;
+            height: 100px;
+            position: relative;
+            perspective: 1000px; /* Perspective for 3D effect */
+            cursor: pointer;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg); /* Flip effect */
+        }
+
+        .card-front,
+        .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden; /* Hide back face */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card-front {
+            background-color: black; /* Front face is black */
+            color: white;
+        }
+
+        .card-back {
+            background-color: #fff;
+            transform: rotateY(180deg); /* Back face rotated */
+        }
+
+        .card img {
+            width: 100%;
+            height: 100%;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Memory Matching Game</h1>
+    <div class="game-container" id="game-container"></div>
+    <button id="restart-button">Restart Game</button>
+    <script>
+        const cardArray = [
+            { name: 'A', img: 'img/A.png' },
+            { name: 'B', img: 'img/B.png' },
+            { name: 'C', img: 'img/C.png' },
+            { name: 'D', img: 'img/D.png' },
+            { name: 'E', img: 'img/E.png' },
+            { name: 'F', img: 'img/F.png' },
+            { name: 'G', img: 'img/G.png' },
+            { name: 'H', img: 'img/H.png' },
+        ];
+
+        let gameGrid = cardArray.concat(cardArray).sort(() => 0.5 - Math.random());
+        let firstCard, secondCard;
+        let hasFlippedCard = false;
+        let lockBoard = false;
+
+        const gameContainer = document.getElementById('game-container');
+
+        function createBoard() {
+            gameGrid.forEach(card => {
+                const cardElement = document.createElement('div');
+                cardElement.classList.add('card');
+                cardElement.dataset.name = card.name;
+
+                const cardInner = document.createElement('div');
+                cardInner.classList.add('card-inner');
+
+                const cardFront = document.createElement('div');
+                cardFront.classList.add('card-front');
+                cardFront.innerHTML = " ";  // Keep it empty for now
+
+                const cardBack = document.createElement('div');
+                cardBack.classList.add('card-back');
+
+                const backImage = document.createElement('img');
+                backImage.setAttribute('src', card.img);
+
+                cardBack.appendChild(backImage);
+                cardInner.appendChild(cardFront);
+                cardInner.appendChild(cardBack);
+                cardElement.appendChild(cardInner);
+                cardElement.addEventListener('click', flipCard);
+                gameContainer.appendChild(cardElement);
+            });
+        }
+
+        function flipCard() {
+            if (lockBoard) return;
+            if (this === firstCard) return;
+
+            this.classList.add('flipped');
+
+            if (!hasFlippedCard) {
+                hasFlippedCard = true;
+                firstCard = this;
+                return;
+            }
+
+            secondCard = this;
+            checkForMatch();
+        }
+
+        function checkForMatch() {
+            const isMatch = firstCard.dataset.name === secondCard.dataset.name;
+
+            isMatch ? disableCards() : unflipCards();
+        }
+
+        function disableCards() {
+            firstCard.removeEventListener('click', flipCard);
+            secondCard.removeEventListener('click', flipCard);
+            resetBoard();
+        }
+
+        function unflipCards() {
+            lockBoard = true;
+            setTimeout(() => {
+                firstCard.classList.remove('flipped');
+                secondCard.classList.remove('flipped');
+                resetBoard();
+            }, 1500);
+        }
+
+        function resetBoard() {
+            [hasFlippedCard, lockBoard] = [false, false];
+            [firstCard, secondCard] = [null, null];
+        }
+
+        document.getElementById('restart-button').addEventListener('click', () => {
+            gameContainer.innerHTML = '';
+            gameGrid = cardArray.concat(cardArray).sort(() => 0.5 - Math.random());
+            createBoard();
+        });
+
+        createBoard();
+    </script>
+</body>
+</html>
